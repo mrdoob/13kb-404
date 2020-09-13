@@ -287,7 +287,7 @@ function render() {
     if ( dummy.position.distanceTo( end.position ) < 1 ) {
     
       soundEnd.play();
-      loadMap( ++ currentLevel );
+      loadMap( ++ currentLevel % 16 );
       
     }
     
