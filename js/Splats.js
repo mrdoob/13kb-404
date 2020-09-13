@@ -9,32 +9,32 @@ mesh.count = 0;
 mesh.renderOrder = 1;
 
 function Splats() {
-
+  
   let current = 0;
-
+  
   function add( matrix ) {
-
+    
     mesh.setMatrixAt( current ++, matrix );
     mesh.instanceMatrix.needsUpdate = true;
-
+    
     if ( current > amount ) current = 0;
     if ( mesh.count < current ) mesh.count = current;
-
+    
   }
-
+  
   function reset() {
-
+    
     mesh.count = 0;
     current = 0;
-
+    
   }
-
+  
   return {
     mesh: mesh,
     add: add,
     reset: reset
   };
-
+  
 }
 
 export { Splats };

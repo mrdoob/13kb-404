@@ -16,48 +16,48 @@ const raycaster = new THREE.Raycaster();
 const transform = new THREE.Object3D();
 
 function Gun() {
-
+  
   let map;
-
+  
   function setMap( value ) {
-
+    
     map = value;
     splats.reset();
-
+    
   }
-
+  
   function shoot( dummy ) {
-
+  
     raycaster.ray.origin.setFromMatrixPosition( dummy.matrixWorld );
     raycaster.ray.direction.set( 0, 0, - 1 ).applyQuaternion( dummy.quaternion ).applyQuaternion( dummy.parent.quaternion );
-
+      
     const intersections = raycaster.intersectObject( map.group.children[ 3 ] );
 
     if ( intersections.length > 0 ) {
 
       const intersection = intersections[ 0 ];
-
+      
       transform.position.set( 0, 0, 0 );
       transform.lookAt( intersection.face.normal );
       transform.rotation.z = Math.random() * Math.PI;
 
       transform.position.copy( intersection.point );
       transform.updateMatrix();
-
+      
       console.log( transform.quaternion.toArray() );
 
       splats.add( transform.matrix );
 
     }
-
+    
   }
-
+  
   return {
     setMap: setMap,
     group: group,
     shoot: shoot
   }
-
+  
 }
 
 export { Gun };

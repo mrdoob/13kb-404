@@ -2,6 +2,8 @@ import * as THREE from 'https://unpkg.com/three@0.120.1/build/three.module.js';
 import { VRButton } from 'https://unpkg.com/three@0.120.1/examples/jsm/webxr/VRButton.js';
 
 import { song } from './Song.js';
+import { song as fxEnd } from './FXEnd.js';
+import { song as fxShoot } from './FXShoot.js';
 import { SoundBox } from './SoundBox.js';
 import { Map } from './Map.js';
 import { Gun } from './Gun.js';
@@ -13,7 +15,7 @@ let map, start, end, tokens, gun;
 let currentLevel = 1;
 let showTitle = true;
 
-let listener, sound;
+let listener, sound, soundEnd, soundShoot;
 
 init();
 
@@ -24,24 +26,31 @@ async function init() {
 
   dummy = new THREE.Group();
   scene.add( dummy );
-
+  
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 100 );
   camera.position.set( 0, 1.6, 0 );
   dummy.add( camera );
 
   //
 
-  const soundbox = new SoundBox();
-  const dataurl = await soundbox.generate( song );
-  const buffer = await new THREE.AudioLoader().loadAsync( dataurl );
-
   listener = new THREE.AudioListener();
   camera.add( listener );
+  
+  const loader = new THREE.AudioLoader();
+  const soundbox = new SoundBox();
 
   sound = new THREE.Audio( listener );
-  sound.setBuffer( buffer );
+  sound.setBuffer( await loader.loadAsync( await soundbox.generate( song ) ) );
   sound.setLoop( true );
   camera.add( sound );
+  
+  soundEnd = new THREE.Audio( listener );
+  soundEnd.setBuffer( await loader.loadAsync( await soundbox.generate( fxEnd ) ) );
+  camera.add( soundEnd );
+  
+  soundShoot = new THREE.Audio( listener );
+  soundShoot.setBuffer( await loader.loadAsync( await soundbox.generate( fxShoot ) ) );
+  camera.add( soundShoot );
 
   /*
   sound = new THREE.PositionalAudio( listener );
@@ -54,7 +63,7 @@ async function init() {
 
   gun = new Gun();
   scene.add( gun.group );
-
+  
   loadMap( currentLevel );
 
   //
@@ -80,7 +89,7 @@ async function init() {
   window.addEventListener( 'resize', onWindowResize, false );
 
   //
-
+  
   controller1 = renderer.xr.getController( 0 );
   controller1.addEventListener( 'connected', onConnected );
   dummy.add( controller1 );
@@ -88,7 +97,7 @@ async function init() {
   controller2 = renderer.xr.getController( 1 );
   controller2.addEventListener( 'connected', onConnected );
   dummy.add( controller2 );
-
+  
   //
 
   raycaster = new THREE.Raycaster();
@@ -96,30 +105,30 @@ async function init() {
 }
 
 function loadMap( level ) {
-
+    
   if ( map !== undefined ) {
-
+    
     scene.remove( map.group );
-
+    
   }
-
+  
   if ( showTitle === true ) level = 0;
-
+  
   map = new Map( level );
   scene.add( map.group );
-
+  
   const children = map.group.children;
-
+  
   start = children[ 0 ];
   end = children[ 1 ];
   tokens = children[ 2 ];
-
+  
   if ( showTitle === true ) {
-
+    
     const mesh = map.group.children[ 3 ];
     mesh.scale.y = 0.5;
     mesh.geometry.center();
-
+    
     const shadow = mesh.clone();
     shadow.material = new THREE.MeshBasicMaterial( { color: 0x0000bb } );
     shadow.position.y = - 2;
@@ -134,7 +143,7 @@ function loadMap( level ) {
 
   dummy.position.copy( start.position );
   dummy.rotation.set( 0, Math.PI, 0 );
-
+  
   gun.setMap( map );
 
 }
@@ -145,84 +154,90 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize( window.innerWidth, window.innerHeight );
-
+  
 }
 
 function onConnected( event ) {
-
+  
   let controller = event.target;
-
+  
   controller.userData.gamepad = event.data.gamepad;
   controller.userData.handedness = event.data.handedness;
-
+  
   if ( event.data.handedness === 'right' ) {
-
+    
     let geometry = new THREE.BufferGeometry()
     geometry.setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
 
     let line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0x0000ff } ) );
     line.scale.z = 2;
-
+    
     controller.add( line );
 
   }
-
+  
 }
 
 function handleController( controller ) {
-
+  
   const gamepad = controller.userData.gamepad;
-
+  
   switch ( controller.userData.handedness ) {
-
+      
     case "left":
 
       dummy.rotateY( - gamepad.axes[ 2 ] * 0.03 );
 
       const translate = gamepad.axes[ 3 ] * 0.03;
       const direction = Math.sin( translate );
-
+      
       raycaster.ray.origin.copy( dummy.position );
       raycaster.ray.direction.set( 0, 0, direction ).applyQuaternion( dummy.quaternion );
-
+      
       const intersections = raycaster.intersectObject( map.group.children[ 3 ] );
-
+      
       if ( intersections.length > 0 ) {
-
+        
         const intersection = intersections[ 0 ];
-
+        
         if ( intersection.distance > translate + 1.5 ) {
-
+          
           dummy.translateZ( translate );
-
+          
         }
-
+        
       }
-
+      
       break;
-
+      
     case "right":
 
       if ( gamepad.buttons[ 0 ].pressed ) {
-
+              
         gun.shoot( controller );
 
+        if ( soundShoot.isPlaying === false ) soundShoot.play();
+        
+      } else {
+        
+        if ( soundShoot.isPlaying === true ) soundShoot.stop();
+        
       }
-
+      
       break;
-
+      
   }
-
+  
 }
 
 //
 
 function render() {
-
+  
   if ( showTitle === true ) {
-
+    
     const time = performance.now() / 5000;
-
+    
     map.group.rotation.x = Math.sin( time ) / 4;
     map.group.rotation.y = Math.PI;
     map.group.rotation.z = Math.cos( time * 1.1234 ) / 4;
@@ -230,18 +245,19 @@ function render() {
     camera.position.y = 50;
     camera.position.z = 2;
     camera.rotation.x = - Math.PI / 2;
-
+    
   } else {
 
     handleController( controller1 );
     handleController( controller2 );
-
+    
     if ( dummy.position.distanceTo( end.position ) < 1 ) {
-
+    
+      soundEnd.play();
       loadMap( ++ currentLevel );
-
+      
     }
-
+    
     map.update();
 
   }

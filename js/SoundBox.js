@@ -343,15 +343,15 @@ var CPlayer = function() {
 };
 
 function SoundBox() {
-
+    
   const player = new CPlayer();
-
+  
   return {
 
     generate: async function ( song ) {
 
       player.init( song );
-
+      
       return new Promise( function ( resolve, reject ) {
 
         const interval = setInterval( function () {
@@ -372,11 +372,11 @@ function SoundBox() {
         }, 0 );
 
       } );
-
+      
     }
-
+        
   };
-
+  
 }
 
 export { SoundBox };

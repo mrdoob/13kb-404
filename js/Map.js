@@ -16,9 +16,9 @@ const vertices = circle.attributes.position.array;
 const colors = new Float32Array( vertices.length );
 
 for ( let i = 0; i < vertices.length; i += 3 ) {
-
+  
   colors[ i + 0 ] = colors[ i + 1 ] = colors[ i + 2 ] = vertices[ i + 1 ] > 0 ? 10 : 1;
-
+  
 }
 
 circle.setAttribute( 'color', new THREE.BufferAttribute( colors, 3 ) );
@@ -26,13 +26,13 @@ circle.setAttribute( 'color', new THREE.BufferAttribute( colors, 3 ) );
 const token = new THREE.Mesh( new THREE.IcosahedronBufferGeometry( 0.25 ), new THREE.MeshNormalMaterial() );
 
 function Map( level ) {
-
+  
   const group = new THREE.Group();
 
   const start = new THREE.Mesh( circle, new THREE.MeshBasicMaterial( {
     color: 0xff2222, vertexColors: true, side: THREE.BackSide, blending: THREE.MultiplyBlending, transparent: true
   } ) );
-  group.add( start );
+  group.add( start );  
 
   const end = new THREE.Mesh( circle, new THREE.MeshBasicMaterial( {
     color: 0x2222ff, vertexColors: true, side: THREE.BackSide, blending: THREE.MultiplyBlending, transparent: true
@@ -43,33 +43,33 @@ function Map( level ) {
   group.add( tokens );
 
   //
-
+  
   const canvas = document.createElement( 'canvas' );
   canvas.width = 64;
   canvas.height = 64;
-
+  
   const offsetX = level % 4;
   const offsetY = Math.floor( level / 4 );
 
   const context = canvas.getContext( '2d' );
   context.drawImage( image, - offsetX * 64, - offsetY * 64 );
-
+  
   const imagedata = context.getImageData( 0, 0, 64, 64 );
   const data = imagedata.data;
-
-  //
-
+  
+  // 
+  
   const vertices = [];
-
+  
   for ( let i = 0, j = 0; i < data.length; i += 4, j ++ ) {
-
+    
     const x = j % 64;
     const z = Math.floor( j / 64 );
-
+    
     const c = color( data, i );
-
+    
     if ( c > 0 ) {
-
+      
       add( vertices, fl, x, z );
       add( vertices, ce, x, z );
 
@@ -77,22 +77,22 @@ function Map( level ) {
       if ( color( data, i + 4 ) === 0 ) add( vertices, we, x, z );
       if ( color( data, i - 256 ) === 0 ) add( vertices, wn, x, z );
       if ( color( data, i + 256 ) === 0 ) add( vertices, ws, x, z );
-
+      
       //
-
+      
       if ( c === 0xff0000 ) start.position.set( x + 0.5, 0.01, z + 0.5 );
       if ( c === 0x0000ff ) end.position.set( x + 0.5, 0.01, z + 0.5 );
-
+      
       if ( c === 0x00ff00 ) {
-
+        
         const mesh = token.clone();
         mesh.position.set( x + 0.5, 1, z + 0.5 );
         tokens.add( mesh );
-
+        
       }
-
+      
     }
-
+    
   }
 
   const attribute = new THREE.Float32BufferAttribute( vertices, 3 );
@@ -100,16 +100,16 @@ function Map( level ) {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute( 'position', attribute );
   geometry.computeVertexNormals();
-
+  
   const material = new THREE.MeshBasicMaterial();
   // const material = new THREE.MeshNormalMaterial( { flatShading: true } );
 
   const mesh = new THREE.Mesh( geometry, material );
   mesh.scale.y = 2;
   group.add( mesh );
-
+  
   function update() {
-
+    
     for ( let i = 0; i < tokens.children.length; i ++ ) {
 
       const token = tokens.children[ i ];
@@ -117,35 +117,35 @@ function Map( level ) {
       token.rotation.y += 0.01;
 
     }
-
+    
     start.rotation.y += 0.02;
     end.rotation.y += 0.02;
-
+    
   }
-
+  
   return {
-
+  
     group: group,
     update: update
-
+  
   };
-
+  
 }
 
 function color( data, i ) {
-
+  
   return data[ i + 0 ] << 16 | data[ i + 1 ] << 8 | data[ i + 2 ];
-
+  
 }
 
 function add( vertices, tile, x, z ) {
-
+  
   for ( let i = 0; i < 18; i += 3 ) {
 
     vertices.push( tile[ i + 0 ] + x, tile[ i + 1 ], tile[ i + 2 ] + z );
 
   }
-
+  
 }
 
 export { Map };
