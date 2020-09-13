@@ -7,6 +7,7 @@ import { song as fxShoot } from './FXShoot.js';
 import { song as fxToken } from './FXToken.js';
 import { SoundBox } from './SoundBox.js';
 import { Map } from './Map.js';
+import { Cylinder } from './Cylinder.js';
 import { Gun } from './Gun.js';
 
 let camera, scene, renderer, dummy;
@@ -31,6 +32,15 @@ async function init() {
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 100 );
   camera.position.set( 0, 1.6, 0 );
   dummy.add( camera );
+  
+  const material = new THREE.MeshBasicMaterial( {
+    color: 0x0000ff, vertexColors: true, side: THREE.BackSide, depthTest: false,
+    blending: THREE.AdditiveBlending, transparent: true
+  } );
+  const safe = new THREE.Mesh( new Cylinder( 0, 1 ), material );
+  safe.rotation.x = - Math.PI / 2;
+  safe.scale.y = 5;
+  camera.add( safe );
 
   //
 
@@ -78,16 +88,8 @@ async function init() {
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
   renderer.xr.enabled = true;
-  renderer.xr.addEventListener( 'sessionstart', function () {
-    showTitle = false;
-    loadMap( currentLevel );
-    sound.play();
-  } );
-  renderer.xr.addEventListener( 'sessionend', function () {
-    showTitle = true;
-    loadMap( currentLevel );
-    sound.stop();
-  } );
+  renderer.xr.addEventListener( 'sessionstart', onSessionStart );
+  renderer.xr.addEventListener( 'sessionend', onSessionEnd );
   document.body.appendChild( renderer.domElement );
   document.body.appendChild( VRButton.createButton( renderer ) );
 
@@ -159,6 +161,22 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize( window.innerWidth, window.innerHeight );
+  
+}
+
+function onSessionStart( event ) {
+  
+  showTitle = false;
+  loadMap( currentLevel );
+  sound.play();
+  
+}
+
+function onSessionEnd( event ) {
+  
+  showTitle = true;
+  loadMap( currentLevel );
+  sound.stop();  
   
 }
 
