@@ -215,7 +215,7 @@ function handleController( controller ) {
 
       if ( currentAxes2State !== axes2State ) {
       
-        dummy.rotateY( axes2State * 0.3 );
+        dummy.rotateY( axes2State * ( Math.PI / 8 ) );
         
         currentAxes2State = axes2State; 
 
@@ -233,7 +233,7 @@ function handleController( controller ) {
         
         const intersection = intersections[ 0 ];
         
-        if ( intersection.distance > translate + 1.5 ) {
+        if ( intersection.distance > translate + 1 ) {
           
           dummy.translateZ( translate );
           
