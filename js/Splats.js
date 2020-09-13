@@ -19,8 +19,6 @@ function Splats() {
     if ( current > amount ) current = 0;
     if ( mesh.count < current ) mesh.count = current;
 
-    if ( current === 0 ) console.log( mesh );
-
   }
 
   function reset() {
