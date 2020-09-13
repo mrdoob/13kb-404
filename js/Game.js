@@ -13,6 +13,8 @@ let map, start, end, tokens, gun;
 let currentLevel = 1;
 let showTitle = true;
 
+let listener, sound;
+
 init();
 
 async function init() {
@@ -21,7 +23,6 @@ async function init() {
   scene.background = new THREE.Color( 0xffffff );
 
   dummy = new THREE.Group();
-  dummy.rotation.y = Math.PI;
   scene.add( dummy );
 
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 100 );
@@ -31,7 +32,23 @@ async function init() {
   //
 
   const soundbox = new SoundBox();
-  await soundbox.generate( song );
+  const dataurl = await soundbox.generate( song );
+  const buffer = await new THREE.AudioLoader().loadAsync( dataurl );
+
+  listener = new THREE.AudioListener();
+  camera.add( listener );
+
+  sound = new THREE.Audio( listener );
+  sound.setBuffer( buffer );
+  sound.setLoop( true );
+  camera.add( sound );
+
+  /*
+  sound = new THREE.PositionalAudio( listener );
+  sound.setBuffer( buffer );
+  sound.setLoop( true );
+  sound.setRefDistance( 1 );
+  */
 
   //
 
@@ -50,12 +67,12 @@ async function init() {
   renderer.xr.addEventListener( 'sessionstart', function () {
     showTitle = false;
     loadMap( currentLevel );
-    soundbox.play();
+    sound.play();
   } );
   renderer.xr.addEventListener( 'sessionend', function () {
     showTitle = true;
     loadMap( currentLevel );
-    soundbox.pause();
+    sound.stop();
   } );
   document.body.appendChild( renderer.domElement );
   document.body.appendChild( VRButton.createButton( renderer ) );
@@ -116,6 +133,7 @@ function loadMap( level ) {
   }
 
   dummy.position.copy( start.position );
+  dummy.rotation.set( 0, Math.PI, 0 );
 
   gun.setMap( map );
 
@@ -173,7 +191,7 @@ function handleController( controller ) {
 
         const intersection = intersections[ 0 ];
 
-        if ( intersection.distance - 1 > translate ) {
+        if ( intersection.distance > translate + 1.5 ) {
 
           dummy.translateZ( translate );
 

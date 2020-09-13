@@ -346,17 +346,6 @@ function SoundBox() {
 
   const player = new CPlayer();
 
-  const audio = new Audio();
-  audio.controls = true;
-  audio.loop = true;
-  // audio.style.position = 'absolute';
-  // audio.style.top = '0';
-  // document.body.appendChild( audio );
-
-  let isPlaying = false;
-
-  let context, source;
-
   return {
 
     generate: async function ( song ) {
@@ -376,41 +365,13 @@ function SoundBox() {
             const wave = player.createWave();
             const blob = new Blob( [ wave ], { type: "audio/wav" } );
 
-            audio.src = URL.createObjectURL( blob );
-
-            resolve( audio );
+            resolve( URL.createObjectURL( blob ) );
 
           }
 
         }, 0 );
 
       } );
-
-    },
-
-    play: function () {
-
-      if ( isPlaying === true ) return;
-
-      if ( context === undefined ) {
-
-        context = new AudioContext();
-        source = context.createMediaElementSource( audio );
-        source.connect( context.destination );
-
-      }
-
-      audio.play();
-
-      isPlaying = true;
-
-    },
-
-    pause: function () {
-
-      audio.pause();
-
-      isPlaying = false;
 
     }
 

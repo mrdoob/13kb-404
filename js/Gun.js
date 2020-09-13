@@ -22,6 +22,7 @@ function Gun() {
   function setMap( value ) {
 
     map = value;
+    splats.reset();
 
   }
 
@@ -38,6 +39,7 @@ function Gun() {
 
       transform.position.set( 0, 0, 0 );
       transform.lookAt( intersection.face.normal );
+      transform.rotation.z = Math.random() * Math.PI;
 
       transform.position.copy( intersection.point );
       transform.updateMatrix();
