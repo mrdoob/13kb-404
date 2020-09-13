@@ -1,7 +1,7 @@
 import * as THREE from 'https://unpkg.com/three@0.120.1/build/three.module.js';
 
 const image = new Image();
-image.src = "data:image/gif;base64,R0lGODdhAAEAAcIAAAAAAAAA//8AAAD/AP///wAAAAAAAAAAACwAAAAAAAEAAQAD/gi63P4wykmrvTjrzbv/YCiOZGmeaKqubOu+cCzPdG3feK7vfO//wKBwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y+16v+CweEz+Es5oAiTNPkfa6rI8BF+3AWk7e8731B91ew5/fYUYhA1/ggyIWmhFj0ONjIuLCpNZBAJxkpuSd2+VeQuYmW5EkUCBlqB4o657rVepQrQ+oLKtoqOyVraqp8C8rLvBuJa+wbXKt3CEuq/OpSa/KgQDnLXYy9LRxZzdyCma2SzVzeWQxN7npOLjzCvtPPPCtMevevUk+/zxP/165Ir1LlHBEwFFJLSxUAcygvlCNfww0c8/dEoiwnJm/kGjvIsoKsoQaWgEyQ3hUh40qbJlyQ7X0lnDloamM5u9EOKMKW2nx5cVTmpo6fIj0XBAUYIMspSezKQThM5ouoMqVINPlxmxGiOO10tgBXJ1ujUrja94wpqtQSDAWoBvHca96m4uWXV0uRyVCnOv3bxV/bIVDBgJR0o/Wxyuy7fwizbbGNkMMLhmOZ5tu0Z1LPHhSqOeEys9ZYy0aTWi6fr9W2K1ybSoGYH9SjssZ8ZEKx99HZv26Uu/bwsfTry48ePIkytfzry58+fQo0ufTr269evYs2vfzr279+/gw4sfT768+fPo06tfz769+/fw48ufT7++/fv48+vfz7+//n8zYzEUYGXqsHaWJ6gg2ImBUynITYEQojLgWRNOVeFIF3aVIQyNGRXhJwxiGKKGI3K44WMnuhATJJFJ0qI2JaIYo4opKlajOTd6KOGMNvKIo486gvjhgzsOyVSO1iAJD5BJMrmkkcJACZeTISlZ5WrTsIRlTtRsyWVrXn5Gx04+WbbYOGR2U6aVg6TZkzTmuHkTnKCFSeUgdnbYmZ0/5lnWn3gFKiGggwr6CaGHGqqVokciumihkCYa6aOSVsrNbhTupVtumWJqoaadcvqppyKSSmJoemZw5kZsdtTIlz2i2mpQbLyIx2SbrigZGpSFqispuPpqK2a9jhoRrH0e/ivmkrLe6WovyNZZlLHTliqqtdWeeq222ZoIKrUq/SfuuOSWa+656Kar7rrstuvuu/DGK++89NZr77345qvvvvz26++/AAcs8MAEF2zwwQgnrPDCDDcMX6pXSolRgs625iBTF6uS8ZQSi1WxPx9r2bFTISs0K8gjB1YyHSeLXOTLQqJiqyozA1TzLTd7nLJcK4MAMUItm9wzRUGzPLRFR/eVNAc/d7n0aDvn0DSYTw9VtM9XE121qlkjHTUOU6O8o5/SeplsmGebLY+ccKxZMmZnuA33shSxDRmdM9WqJt7M8ln2lmkD/jeWjjbKKDCFI344XIkzvngzjUP+uFiR/lM++V2TGp654mNv662pn3suI+iji07jt9iG66vq4F5GN9DQvu50s7kyE22TaAwbLLW685pr72cUiy3wma3uemq4K4t837bczrztslNN+unTx2q69d2Wnj311weOlPHfOyz++OSXb/756Kev/vrst+/++/DHL//89Ndv//3456///vz37///AAygAAdIwAIOLGwui5kCa7GxWzRQIA+kRwRV9rUbIFBoFRTQ1g7RNaVlkEAwI9ICj7TBC1zQaCwqYUdyRg8WVsWFPPtgpmT4KRqKyIYkwqG3dCgjHp7Ohz0C4o+EGCQRGpGEBSJb8tA2ONc0kTB5M9OcVqUTvb2JqYrUsJsVs6QQLUrReVpT4vMEt0S1lZGMltJcGjm3Rsdtzo1tlNwb5RhHy83RjnXEXB4DUzk9UuqPJKye97pRu5QUMnypMyT4CLlIvnGLdYnEygn1obxJAuJV0QMZ7YR1md0Nr5O+42QiPMkt4gnvkcezJJ5it7wrbbJ1kuwgYgT5RCxyb3vYgyQqEblLRraOl6HDpQGHScxiGvOYyEymMpfJzGY685n2SQAAOw==";
+image.src = "data:image/gif;base64,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";
 
 const fl = [ 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1 ];
 const ce = [ 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0 ];
@@ -48,8 +48,11 @@ function Map( level ) {
   canvas.width = 64;
   canvas.height = 64;
 
+  const offsetX = level % 4;
+  const offsetY = Math.floor( level / 4 );
+
   const context = canvas.getContext( '2d' );
-  context.drawImage( image, - level * 64, 0 );
+  context.drawImage( image, - offsetX * 64, - offsetY * 64 );
 
   const imagedata = context.getImageData( 0, 0, 64, 64 );
   const data = imagedata.data;
@@ -114,6 +117,9 @@ function Map( level ) {
       token.rotation.y += 0.01;
 
     }
+
+    start.rotation.y += 0.02;
+    end.rotation.y += 0.02;
 
   }
 
