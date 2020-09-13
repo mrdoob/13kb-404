@@ -201,6 +201,8 @@ function onConnected( event ) {
   
 }
 
+let currentAxes2State = 0;
+
 function handleController( controller ) {
   
   const gamepad = controller.userData.gamepad;
@@ -209,7 +211,15 @@ function handleController( controller ) {
       
     case "left":
 
-      dummy.rotateY( - gamepad.axes[ 2 ] * 0.03 );
+      let axes2State = Math.sign( - Math.round( gamepad.axes[ 2 ] ) );
+
+      if ( currentAxes2State !== axes2State ) {
+      
+        dummy.rotateY( axes2State * 0.3 );
+        
+        currentAxes2State = axes2State; 
+
+      }
 
       const translate = gamepad.axes[ 3 ] * 0.03;
       const direction = Math.sin( translate );
