@@ -4,6 +4,7 @@ import { VRButton } from 'https://unpkg.com/three@0.120.1/examples/jsm/webxr/VRB
 import { song } from './Song.js';
 import { song as fxEnd } from './FXEnd.js';
 import { song as fxShoot } from './FXShoot.js';
+import { song as fxToken } from './FXToken.js';
 import { SoundBox } from './SoundBox.js';
 import { Map } from './Map.js';
 import { Gun } from './Gun.js';
@@ -11,11 +12,11 @@ import { Gun } from './Gun.js';
 let camera, scene, renderer, dummy;
 let controller1, controller2, raycaster;
 
-let map, start, end, tokens, gun;
+let gun, map, start, end, tokens;
 let currentLevel = 1;
 let showTitle = true;
 
-let listener, sound, soundEnd, soundShoot;
+let listener, sound, soundEnd, soundShoot, soundToken;
 
 init();
 
@@ -51,6 +52,10 @@ async function init() {
   soundShoot = new THREE.Audio( listener );
   soundShoot.setBuffer( await loader.loadAsync( await soundbox.generate( fxShoot ) ) );
   camera.add( soundShoot );
+  
+  soundToken = new THREE.Audio( listener );
+  soundToken.setBuffer( await loader.loadAsync( await soundbox.generate( fxToken ) ) );
+  camera.add( soundToken );
 
   /*
   sound = new THREE.PositionalAudio( listener );
@@ -256,6 +261,20 @@ function render() {
       soundEnd.play();
       loadMap( ++ currentLevel );
       
+    }
+    
+    for ( let i = 0; i < tokens.children.length; i ++ ) {
+
+      const token = tokens.children[ i ];
+
+      if ( token.visible === true && dummy.position.distanceTo( token.position ) < 1.5 ) {
+        
+        soundToken.play();
+
+        token.visible = false;
+        
+      }
+
     }
     
     map.update();
