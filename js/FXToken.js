@@ -48,7 +48,7 @@ var song = {
     },
   ],
   rowLen: 5513,   // In sample lengths
-  patternLen: 8,  // Rows per pattern
+  patternLen: 4,  // Rows per pattern
   endPattern: 0,  // End pattern
   numChannels: 1  // Number of channels
 };
