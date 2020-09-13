@@ -23,9 +23,17 @@ function Splats() {
 
   }
 
+  function reset() {
+
+    mesh.count = 0;
+    current = 0;
+
+  }
+
   return {
     mesh: mesh,
-    add: add
+    add: add,
+    reset: reset
   };
 
 }
