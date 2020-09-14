@@ -11,6 +11,6 @@ function html() {
 }
 
 export default {
-	input: "js/Game.js",
+	input: "src/Game.js",
 	output: { file: "index.html", format: "esm", plugins: [ terser(), html() ] }
 };
