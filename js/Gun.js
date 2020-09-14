@@ -43,8 +43,6 @@ function Gun() {
 
       transform.position.copy( intersection.point );
       transform.updateMatrix();
-      
-      console.log( transform.quaternion.toArray() );
 
       splats.add( transform.matrix );
 
