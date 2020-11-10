@@ -47,24 +47,23 @@ async function init() {
 	listener = new THREE.AudioListener();
 	camera.add( listener );
 
-	const loader = new THREE.AudioLoader();
-	const soundbox = new SoundBox();
+	const soundbox = new SoundBox( listener.context );
 
 	sound = new THREE.Audio( listener );
-	sound.setBuffer( await loader.loadAsync( await soundbox.generate( song ) ) );
+	sound.setBuffer( await soundbox.generate( song ) );
 	sound.setLoop( true );
 	camera.add( sound );
 
 	soundEnd = new THREE.Audio( listener );
-	soundEnd.setBuffer( await loader.loadAsync( await soundbox.generate( fxEnd ) ) );
+	soundEnd.setBuffer( await soundbox.generate( fxEnd ) );
 	camera.add( soundEnd );
 
 	soundShoot = new THREE.Audio( listener );
-	soundShoot.setBuffer( await loader.loadAsync( await soundbox.generate( fxShoot ) ) );
+	soundShoot.setBuffer( await soundbox.generate( fxShoot ) );
 	camera.add( soundShoot );
 
 	soundToken = new THREE.Audio( listener );
-	soundToken.setBuffer( await loader.loadAsync( await soundbox.generate( fxToken ) ) );
+	soundToken.setBuffer( await soundbox.generate( fxToken ) );
 	camera.add( soundToken );
 
 	/*

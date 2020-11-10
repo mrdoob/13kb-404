@@ -302,48 +302,20 @@ var CPlayer = function() {
 			return mCurrentCol / mSong.numChannels;
 	};
 
-	// Create a WAVE formatted Uint8Array from the generated audio data
-	this.createWave = function() {
-			// Create WAVE header
-			var headerLen = 44;
-			var l1 = headerLen + mNumWords * 2 - 8;
-			var l2 = l1 - 36;
-			var wave = new Uint8Array(headerLen + mNumWords * 2);
-			wave.set(
-					[82,73,70,70,
-					 l1 & 255,(l1 >> 8) & 255,(l1 >> 16) & 255,(l1 >> 24) & 255,
-					 87,65,86,69,102,109,116,32,16,0,0,0,1,0,2,0,
-					 68,172,0,0,16,177,2,0,4,0,16,0,100,97,116,97,
-					 l2 & 255,(l2 >> 8) & 255,(l2 >> 16) & 255,(l2 >> 24) & 255]
-			);
-
-			// Append actual wave data
-			for (var i = 0, idx = headerLen; i < mNumWords; ++i) {
-					// Note: We clamp here
-					var y = mMixBuf[i];
-					y = y < -32767 ? -32767 : (y > 32767 ? 32767 : y);
-					wave[idx++] = y & 255;
-					wave[idx++] = (y >> 8) & 255;
+	this.createAudioBuffer = function(context) {
+		const buffer = context.createBuffer(2, mMixBuf.length / 2, 44100);
+		for (var i = 0; i < 2; i ++) {
+			const data = buffer.getChannelData(i);
+			for (var j = 0, k = i; j < buffer.length; j ++, k += 2) {
+				data[j] = mMixBuf[k] / 65536;
 			}
-
-			// Return the WAVE formatted typed array
-			return wave;
-	};
-
-	// Get n samples of wave data at time t [s]. Wave data in range [-2,2].
-	this.getData = function(t, n) {
-			var i = 2 * Math.floor(t * 44100);
-			var d = new Array(n);
-			for (var j = 0; j < 2*n; j += 1) {
-					var k = i + j;
-					d[j] = t > 0 && k < mMixBuf.length ? mMixBuf[k] / 32768 : 0;
-			}
-			return d;
+		}
+		return buffer;
 	};
 
 };
 
-function SoundBox() {
+function SoundBox( context ) {
 
 	const player = new CPlayer();
 
@@ -362,11 +334,7 @@ function SoundBox() {
 					if ( status === true ) {
 
 						clearInterval( interval );
-
-						const wave = player.createWave();
-						const blob = new Blob( [ wave ], { type: "audio/wav" } );
-
-						resolve( URL.createObjectURL( blob ) );
+						resolve( player.createAudioBuffer( context ) );
 
 					}
 
