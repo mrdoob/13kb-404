@@ -303,11 +303,11 @@ var CPlayer = function() {
 	};
 
 	this.createAudioBuffer = function(context) {
-		const buffer = context.createBuffer(2, mMixBuf.length / 2, 44100);
+		const buffer = context.createBuffer(2, mNumWords / 2, 44100);
 		for (var i = 0; i < 2; i ++) {
 			const data = buffer.getChannelData(i);
-			for (var j = 0, k = i; j < buffer.length; j ++, k += 2) {
-				data[j] = mMixBuf[k] / 65536;
+			for (var j = i; j < mNumWords; j += 2) {
+				data[j >> 1] = mMixBuf[j] / 65536;
 			}
 		}
 		return buffer;
